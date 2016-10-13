@@ -36,7 +36,7 @@ require([
                     data: null,
                     success: function (data) {
                         if (data.ret == 0) {
-                            if (data.list.length > 0) {
+                            if (data.userStockList.length > 0) {
                                 data.hasStock = 1;
                             } else {
                                 data.hasStock = 0;
@@ -47,18 +47,17 @@ require([
                     },
                     complete: function (xhr) {
                         var data = $.parseJSON(xhr.response);
-                        setTimeout(function () {
-                            if (type == 'first') {
-                                that.showAd({type: 'first'});
-                            } else if (type == 'showBusiness') {
-                                // AD
-                                data.ad && that.showAd({
-                                    type: 'business',
-                                    link: data.ad.link,
-                                    url: data.ad.url
-                                });
-                            }
-                        }, 500);
+
+                        if (type == 'first') {
+                            that.showAd({type: 'first'});
+                        } else if (type == 'showBusiness') {
+                            // AD
+                            data.ad && that.showAd({
+                                type: 'business',
+                                link: data.ad.link,
+                                url: data.ad.url
+                            });
+                        }
                     },
                     error: function (xhr, textStatus, errorThrown) {
 
@@ -71,6 +70,7 @@ require([
             showAd: function (options) {
                 var html = null;
                 if (options.type == 'first') {
+                    //新手引导
                     void 0;
                     var firstAd = {
                         link: '',
@@ -82,6 +82,7 @@ require([
                         jDialog.ad('<a href="javascript:void(0)"><img src="' + firstAd.url + '"></a>');
                     }
                 } else if (options.type == 'business') {
+                    //广告
                     void 0;
                     var businessAd = {
                         link: options.link || '',
@@ -428,18 +429,19 @@ require([
                 var tpl = that.$settingTPL.html();
                 var html = null;
                 var stockCodes = window.location.href.split('/');
-                var stockCode = stockCodes[stockCodes.length - 1];
+                var szLabel = stockCodes[stockCodes.length - 1];
 
                 $.ajax({
                     url: '/u/setting',
                     data: {
-                        stockCode: stockCode
+                        szLabel: szLabel
                     },
                     success: function (data) {
                         if (data.ret == 0) {
+                            data.maxRule = 10;
                             html = juicer(tpl, data);
                             that.$pageNode.html(html).removeClass('du-hide');
-                            document.title = data.stockName + '(' + data.stockCode + ')';
+                            document.title = data.szLabel + '(' + data.szLabel + ')';
                         }
                     },
                     complete: function () {
@@ -455,39 +457,39 @@ require([
             handleAdd: function ($btnNode, type) {
                 var riseTpl = '' +
                     '<li class="du-item">' +
-                    '<div class="du-item-before">超过<input name="rise" class="input" type="text" value="" maxLength="7">%</div>' +
+                    '<div class="du-item-before">超过<input name="rose_greater" class="input" type="text" value="" maxLength="7">%</div>' +
                     '<div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>' +
                     '</li>';
 
                 var fallTpl = '' +
                     '<li class="du-item minus-item">' +
-                    '<div class="du-item-before">超过<span name="fall" class="minus">—</span><input class="input" type="text" value="" maxLength="7">%</div>' +
+                    '<div class="du-item-before">超过<span name="rose_less" class="minus">—</span><input class="input" type="text" value="" maxLength="7">%</div>' +
                     '<div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>' +
                     '</li>';
 
                 var priceLowTpl = '' +
                     '<li class="du-item">' +
-                    '<div class="du-item-before">低于<input name="priceLow" class="input" type="text" value="" maxLength="7">元</div>' +
+                    '<div class="du-item-before">低于<input name="price_less" class="input" type="text" value="" maxLength="7">元</div>' +
                     '<div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>' +
                     '</li>';
 
                 var priceHeightTpl = '' +
                     '<li class="du-item">' +
-                    '<div class="du-item-before">高于<input name="priceHeight" class="input" type="text" value="" maxLength="7">元</div>' +
+                    '<div class="du-item-before">高于<input name="price_greater" class="input" type="text" value="" maxLength="7">元</div>' +
                     '<div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>' +
                     '</li>';
 
                 switch (type) {
-                    case 'rise':
+                    case 'rose_greater':
                         $btnNode.parent().before(riseTpl);
                         break;
-                    case 'fall':
+                    case 'rose_less':
                         $btnNode.parent().before(fallTpl);
                         break;
-                    case 'priceLow':
+                    case 'price_less':
                         $btnNode.parent().before(priceLowTpl);
                         break;
-                    case 'priceHeight':
+                    case 'price_greater':
                         $btnNode.parent().before(priceHeightTpl);
                         break;
 
@@ -735,17 +737,6 @@ require([
         };
 
         yunRouter.init();
-        $.ajax({
-            url: '/u/authQuery',
-            success: function (isExist) {
-                if (isExist) {
-                    window.location = '#/index';
-                } else{
-                    alert('账号登录失败');
-                }
-            },
-            dataType: 'json',
-            type: 'get',
-            timeout: 15000
-        });
+        //进入页面表明权限校验已通过
+        window.location = '#/index';
     });

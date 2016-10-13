@@ -27,13 +27,13 @@
             <div class="du-panel-bd">
                 <div class="sotck-bx">
                     <ul class="du-list">
-                        {@each list as item,index}
+                        {@each userStockList as item,index}
                         <li class="du-item du-item-link {@if item.stockStatus==0}du-item-disabled{@/if}">
-                            <a href="#/setting/${item.stockCode}" class="">
+                            <a href="#/setting/${item.szLabel}" class="">
                                 <div class="du-item-before">
-                                    <div class="name">${item.stockName}(${item.stockCode})</div>
+                                    <div class="name">${item.szLabel}(${item.szLabel})</div>
                                 </div>
-                                {@if item.stockStatus==1}
+                                {@if item.state==1}
                                 <div class="du-item-after">
                                     <div class="view du-iconfont du-icon-arrow-right"></div>
                                 </div>
@@ -60,7 +60,7 @@
         <a href="javascript:void(0)" class="du-button du-button-hollow-default du-button-disabled"><b class="iconfont icon-edit"></b>编辑股票</a>
         {@/if}
 
-        {@if list.length<3}
+        {@if userStockList.length<3}
         <a href="#/add" class="du-button du-button-hollow-default" data-event="add"><b class="iconfont icon-plus"></b>添加股票</a>
         {@else}
         <a href="javascript:void(0)" class="du-button du-button-hollow-default du-button-disabled" data-event="add"><b class="iconfont icon-plus"></b>添加股票</a>
@@ -111,24 +111,26 @@
     
     <script id="setting-tpl" type="text/template">
     <div class="page-outer">
-        <form id="setting-form" data-stockCode="${stockCode}">
+        <form id="setting-form" data-stockCode="${szLabel}">
             <div class="du-panel">
                 <div class="du-panel-hd">
                     当日涨幅 <span class="color-999 fs12 ml-10">(当日涨幅达到或者超过设定值提醒)</span>
                 </div>
                 <div class="du-panel-bd">
                     <ul class="du-list">
-                        {@each rise as item,index}
+                        {@each rose_greater as item,index}
                         <li class="du-item">
-                            <div class="du-item-before">超过<input name="rise" class="input" type="tel" value="${item}" maxLength="7">%</div>
+                            <div class="du-item-before">超过<input name="rose_greater" class="input" type="tel" value="${item.value}" maxLength="7">%</div>
                             <div class="du-item-after">
                                 <b class="iconfont icon-del" data-event="del" title="删除"></b>
                             </div>
                         </li>
                         {@/each}
+                        {@if rose_greater.length < maxRule}
                         <li class="du-item du-flex-center">
-                            <a href="javascript:void(0)" class="act-add" data-type="rise" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
+                            <a href="javascript:void(0)" class="act-add" data-type="rose_greater" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
                         </li>
+                        {@/if}
                     </ul>
                 </div>
             </div>
@@ -139,15 +141,17 @@
                 </div>
                 <div class="du-panel-bd">
                     <ul class="du-list">
-                        {@each fall as item,index}
+                        {@each rose_less as item,index}
                         <li class="du-item minus-item">
-                        <div class="du-item-before">超过<span class="minus">—</span><input name="fall" class="input" type="tel" value="${item}" maxLength="7">%</div>
+                        <div class="du-item-before">超过<span class="minus">—</span><input name="rose_less" class="input" type="tel" value="${-item.value}" maxLength="7">%</div>
                             <div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>
                         </li>
                         {@/each}
+                        {@if rose_less.length < maxRule}
                         <li class="du-item du-flex-center">
-                            <a href="javascript:void(0)" class="act-add" data-type="fall" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
+                            <a href="javascript:void(0)" class="act-add" data-type="rose_less" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
                         </li>
+                        {@/if}
                     </ul>
                 </div>
             </div>
@@ -158,15 +162,17 @@
                 </div>
                 <div class="du-panel-bd">
                     <ul class="du-list">
-                        {@each priceHeight as item,index}
+                        {@each price_greater as item,index}
                         <li class="du-item">
-                            <div class="du-item-before">高于<input class="input" name="priceHeight" type="tel" value="${item}" maxLength="7">元</div>
+                            <div class="du-item-before">高于<input class="input" name="price_greater" type="tel" value="${item.value}" maxLength="7">元</div>
                             <div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>
-                        </li>               
-                        {@/each}
-                        <li class="du-item du-flex-center">
-                            <a href="javascript:void(0)" class="act-add" data-type="priceHeight" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
                         </li>
+                        {@/each}
+                        {@if price_greater.length < maxRule}
+                        <li class="du-item du-flex-center">
+                            <a href="javascript:void(0)" class="act-add" data-type="price_greater" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
+                        </li>
+                        {@/if}
                     </ul>
                 </div>
             </div>
@@ -177,15 +183,17 @@
                 </div>
                 <div class="du-panel-bd">
                     <ul class="du-list">
-                        {@each priceLow as item,index}
+                        {@each price_less as item,index}
                         <li class="du-item">
-                            <div class="du-item-before">低于<input class="input" type="tel" value="${item}" maxLength="7">元</div>
+                            <div class="du-item-before">低于<input class="input" name="price_less" type="tel" value="${item.value}" maxLength="7">元</div>
                             <div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>
-                        </li>               
-                        {@/each}
-                        <li class="du-item du-flex-center">
-                            <a href="javascript:void(0)" class="act-add" data-type="priceLow" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
                         </li>
+                        {@/each}
+                        {@if price_less.length < maxRule}
+                        <li class="du-item du-flex-center">
+                            <a href="javascript:void(0)" class="act-add" data-type="price_less" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
+                        </li>
+                        {@/if}
                     </ul>
                 </div>
             </div>
