@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "express": "^4.12.4"
+  },
+  "dependencies": {
+    "mysql": "^2.11.1",
+    "bluebird": "^3.4.6",
+    "cookie-parser": "^1.4.3",
+    "body-parser": "^1.15.2"
+  }
+}

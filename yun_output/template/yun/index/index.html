@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>股票云助手</title>
+    <script src="/assets/yun/js/util/adaptive/adaptive_v3-feb09a4f5e.js"></script>
+    <link rel="stylesheet" href="/assets/yun/css/delta/delta-dc39ef53da.css">
+    <link rel="stylesheet" href="/assets/yun/css/iconfont/iconfont-941572480f.css">
+    <link rel="stylesheet" href="/assets/yun/css/yun/yun-8da93c1967.css">
+    <script>window.adaptive.init();</script>
+</head>
+<body>
+<div id="du-app" class="du-app">
+<div class="du-page">
+<div class="du-page-bd">
+<div class="du-page-bd-inner">
+    <div class="page-index du-hide"></div>
+    <div class="page-edit du-hide"></div>
+    <div class="page-setting du-hide"></div>
+    <div class="page-add du-hide"></div>
+
+    <script id="index-tpl" type="text/template">
+    <div class="page-outer">
+
+        {@if hasStock==1}
+        <div class="du-panel has-bx">
+            <div class="du-panel-bd">
+                <div class="sotck-bx">
+                    <ul class="du-list">
+                        {@each list as item,index}
+                        <li class="du-item du-item-link {@if item.stockStatus==0}du-item-disabled{@/if}">
+                            <a href="#/setting/${item.stockCode}" class="">
+                                <div class="du-item-before">
+                                    <div class="name">${item.stockName}(${item.stockCode})</div>
+                                </div>
+                                {@if item.stockStatus==1}
+                                <div class="du-item-after">
+                                    <div class="view du-iconfont du-icon-arrow-right"></div>
+                                </div>
+                                {@else}
+                                <div class="du-item-after">
+                                    <div class="view">已暂停</div>
+                                </div>
+                                {@/if}
+                            </a>
+                        </li>
+                        {@/each}
+                    </ul> 
+                </div>
+            </div>
+        </div>
+        {@else}
+        <div class="empty-bx">还未添加</div>
+        {@/if}
+    </div>
+    <div class="page-act">
+        {@if hasStock==1}
+        <a href="#/edit" class="du-button du-button-hollow-default"><b class="iconfont icon-edit"></b>编辑股票</a>
+        {@else}
+        <a href="javascript:void(0)" class="du-button du-button-hollow-default du-button-disabled"><b class="iconfont icon-edit"></b>编辑股票</a>
+        {@/if}
+
+        {@if list.length<3}
+        <a href="#/add" class="du-button du-button-hollow-default" data-event="add"><b class="iconfont icon-plus"></b>添加股票</a>
+        {@else}
+        <a href="javascript:void(0)" class="du-button du-button-hollow-default du-button-disabled" data-event="add"><b class="iconfont icon-plus"></b>添加股票</a>
+        {@/if}
+    </div>
+    </script>
+
+    <script id="edit-tpl" type="text/template">
+    <div class="page-outer">
+
+        {@if hasStock==1}
+        <div class="du-panel has-bx">
+            <div class="du-panel-bd">
+                <div class="sotck-bx">
+                    <ul class="du-list">
+                        {@each list as item,index}
+                        <li class="du-item du-item-link {@if item.stockStatus==0}du-item-disabled{@/if}" data-stockCode="${item.stockCode}">
+                            <a href="javascript:void(0)" class="">
+                                <div class="du-item-before">
+                                    <div class="del" data-event="del"><b class="iconfont icon-del" title="删除"></b></div>
+                                    <div class="name">${item.stockName}(${item.stockCode})</div>
+                                </div>
+                                {@if item.stockStatus==1}
+                                <div class="du-item-after">
+                                    <div class="operate"><span class="du-button du-button-primary du-button-disabled" data-event="pause">暂停</span></div>
+                                </div>
+                                {@else}
+                                <div class="du-item-after">
+                                    <div class="operate"><span class="du-button du-button-primary" data-event="open">开启</span></div>
+                                </div>
+                                {@/if}
+                            </a>
+                        </li>
+                        {@/each}
+                    </ul> 
+                </div>
+            </div>
+        </div>
+        {@else}
+        <div class="empty-bx">还未添加</div>
+        {@/if}
+    </div>
+    <div class="page-act">
+        <a href="#/index" class="du-button du-button-primary"><b class="iconfont icon-yes"></b>保存</a>
+        <a href="javascript:void(0)" class="du-button du-button-hollow-default du-button-disabled" data-event="add"><b class="iconfont icon-plus"></b>添加股票</a>
+    </div>
+    </script>
+    
+    <script id="setting-tpl" type="text/template">
+    <div class="page-outer">
+        <form id="setting-form" data-stockCode="${stockCode}">
+            <div class="du-panel">
+                <div class="du-panel-hd">
+                    当日涨幅 <span class="color-999 fs12 ml-10">(当日涨幅达到或者超过设定值提醒)</span>
+                </div>
+                <div class="du-panel-bd">
+                    <ul class="du-list">
+                        {@each rise as item,index}
+                        <li class="du-item">
+                            <div class="du-item-before">超过<input name="rise" class="input" type="tel" value="${item}" maxLength="7">%</div>
+                            <div class="du-item-after">
+                                <b class="iconfont icon-del" data-event="del" title="删除"></b>
+                            </div>
+                        </li>
+                        {@/each}
+                        <li class="du-item du-flex-center">
+                            <a href="javascript:void(0)" class="act-add" data-type="rise" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="du-panel">
+                <div class="du-panel-hd">
+                    当日跌幅 <span class="color-999 fs12 ml-10">(当日跌幅达到或者超过设定值提醒)</span>
+                </div>
+                <div class="du-panel-bd">
+                    <ul class="du-list">
+                        {@each fall as item,index}
+                        <li class="du-item minus-item">
+                        <div class="du-item-before">超过<span class="minus">—</span><input name="fall" class="input" type="tel" value="${item}" maxLength="7">%</div>
+                            <div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>
+                        </li>
+                        {@/each}
+                        <li class="du-item du-flex-center">
+                            <a href="javascript:void(0)" class="act-add" data-type="fall" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="du-panel">
+                <div class="du-panel-hd">
+                    价格高于 <span class="color-999 fs12 ml-10">(当日价格达到或者高于设定值提醒)</span>
+                </div>
+                <div class="du-panel-bd">
+                    <ul class="du-list">
+                        {@each priceHeight as item,index}
+                        <li class="du-item">
+                            <div class="du-item-before">高于<input class="input" name="priceHeight" type="tel" value="${item}" maxLength="7">元</div>
+                            <div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>
+                        </li>               
+                        {@/each}
+                        <li class="du-item du-flex-center">
+                            <a href="javascript:void(0)" class="act-add" data-type="priceHeight" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="du-panel">
+                <div class="du-panel-hd">
+                    价格低于 <span class="color-999 fs12 ml-10">(当日价格达到或者低于设定值提醒)</span>
+                </div>
+                <div class="du-panel-bd">
+                    <ul class="du-list">
+                        {@each priceLow as item,index}
+                        <li class="du-item">
+                            <div class="du-item-before">低于<input class="input" type="tel" value="${item}" maxLength="7">元</div>
+                            <div class="du-item-after"><b class="iconfont icon-del" data-event="del" title="删除"></b></div>
+                        </li>               
+                        {@/each}
+                        <li class="du-item du-flex-center">
+                            <a href="javascript:void(0)" class="act-add" data-type="priceLow" data-event="add"><b class="iconfont icon-plus"></b>添加</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="page-act">
+        <a href="#/index" class="du-button du-button-hollow-default"><b class="iconfont icon-return"></b>取消</a>
+        <a href="javascript:void(0)" class="du-button du-button-primary" data-event="save"><b class="iconfont icon-yes"></b>保存</a>
+    </div>
+    </script>
+
+    <script id="add-tpl" type="text/template">
+    <div class="search-bx">
+        <div class="search-bd">
+            <input data-event="search" type="text" class="input" placeholder="输入代码或首字母">
+            <b class="iconfont icon-search"></b>
+            <a class="search-close" style="display:none" href="javascript:void(0)" data-event="clear"><b class="iconfont icon-del01" title="关闭"></b></a>
+        </div>
+    </div>
+
+    <div class="du-panel">
+        <div class="du-panel-bd">
+            <div class="stock-bx"></div>
+        </div>
+    </div>
+    </script>
+
+</div>
+</div>
+</div>
+</div>
+<script src="/assets/yun/js/util/require/require-5b833e75c6.js?version=1.0" data-main="/assets/yun/js/main/main.js"></script>
+</body>
+</html>

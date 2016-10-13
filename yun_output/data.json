@@ -1,0 +1,71 @@
+{
+    "/u/index":{
+        "ret": "0",
+        "list": [
+            {
+                "stockCode"   : "0000001",
+                "stockName"   : "建设银行",
+                "stockStatus" : "1"
+            },
+            {
+                "stockCode"   : "0000002",
+                "stockName"   : "中国石油",
+                "stockStatus" : "1"
+            }
+        ],
+        "ad" : {
+            "url" : "http://cms-bucket.nosdn.127.net/catchpic/4/4e/4e6f73c0f768882022fa7cf077783cc4.png?imageView&thumbnail=550x0",
+            "link": "http://www.baidu.com"
+        }
+    },
+
+    "/u/pause":{
+        "ret": "0"
+    },
+
+    "/u/open":{
+        "ret": "0"
+    },
+
+    "/u/del":{
+        "ret": "0"
+    },
+
+    "/u/add":{
+        "ret": "1"
+    },
+
+    "/u/search":{
+        "ret": "0",
+        "list": [
+            {
+                "stockCode"   : "0000011",
+                "stockName"   : "建设银行2"
+            },
+            {
+                "stockCode"   : "0000012",
+                "stockName"   : "中国石油2"
+            },
+            {
+                "stockCode"   : "0000013",
+                "stockName"   : "中国铁建"
+            }
+        ]
+    },
+
+    "/u/setting":{
+        "ret": "0",
+        "stockCode": "sh600300",
+        "stockName": "招商银行",
+        "rise": ["5.50"], 
+        "fall": ["15.00","30.03"],
+        "priceLow":["150.01","300.20"],
+        "priceHeight":["152.31","3000.20"]
+    },
+
+    "/u/setting/submit":{
+        "ret": "0",
+        "retMsg" : "出错文案"
+    }
+
+}
