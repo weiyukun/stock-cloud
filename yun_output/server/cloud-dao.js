@@ -22,8 +22,24 @@ var cloudDao = {
         });
     },
 
+    //查询所有股票列表
+    findAllStock: function () {
+        return new Promise(function (resolve, reject) {
+            var sql = "SELECT * FROM shares_full_base";
+
+            sqlUtils.query(sql, [], function (err, rows, fields) {
+                if (!err) {
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }
+            });
+        });
+    },
+
+
     //查询某用户订阅的股票以及条件
-    queryUserStockInfo: function (openId) {
+    findUserStockInfo: function (openId) {
         return new Promise(function (resolve, reject) {
             var sql = "SELECT *, count(szLabel) AS 'ruleCount' FROM rule_info WHERE user_openid = ? GROUP BY szLabel";
             var params = [openId];
@@ -39,7 +55,7 @@ var cloudDao = {
     },
 
     //查询广告信息
-    queryAdInfo: function () {
+    findAdInfo: function () {
         return new Promise(function (resolve, reject) {
             var sql = 'SELECT * FROM ad_info WHERE state = ?'
             var params = [true];
@@ -60,7 +76,7 @@ var cloudDao = {
     }, 
     
     //查询某用户的某股票的设置条件
-    queryRules: function (openId, stockLabel) {
+    findRules: function (openId, stockLabel) {
         return new Promise(function (resolve, reject) {
             var sql = "SELECT * FROM rule_info WHERE user_openid = ? and szLabel = ?";
             var params = [openId, stockLabel];

@@ -76,10 +76,10 @@ var index = '/u/index';
 app.get('/u/index', function (req, res) {
     var resp = {};
     resp.ret = 0;
-    cloudDao.queryUserStockInfo(req.cookies['open_id'])
+    cloudDao.findUserStockInfo(req.cookies['open_id'])
         .then(function (stockList) {
             resp.userStockList = stockList;
-            return cloudDao.queryAdInfo();
+            return cloudDao.findAdInfo();
         })
         .then(function (adInfo) {
             resp.ad = adInfo;
@@ -88,11 +88,6 @@ app.get('/u/index', function (req, res) {
         .catch(function (error) {
             console.error(error);
         });
-
-
-    // setTimeout(function () {
-    //     res.json(data[index]);
-    // }, 500);
 });
 
 var pause = '/u/pause';
@@ -136,7 +131,7 @@ app.get('/u/setting', function (req, res) {
     resp.ret = 0;
     var openId = req.cookies['open_id'];
     var szLabel = req.query.szLabel;
-    cloudDao.queryRules(openId, szLabel)
+    cloudDao.findRules(openId, szLabel)
         .then(function (ruleList) {
             resp.szLabel = szLabel;
             resp.ruleList = ruleList;

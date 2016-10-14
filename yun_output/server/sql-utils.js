@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var stockUtils = require('./stock-utils');
 
 var connection = mysql.createConnection({
     host     : '120.26.51.70',
@@ -14,6 +15,7 @@ connection.connect(function(err) {
         return;
     }
     console.log('sql connect 【success】 ' + connection.threadId);
+    stockUtils.initStockList();
 });
 
 
